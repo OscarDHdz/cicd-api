@@ -1,4 +1,4 @@
-var env = process.env.NODE_ENV || 'development';
+var {env} = require('./configs/initconfig');
 var configs = require('./knexfile');
 var knex = require('knex')(configs[env]);
 
@@ -35,3 +35,6 @@ knex.Validate = ( ) => {
     else resolve(true);
   })
 }
+
+
+module.exports = knex;
