@@ -16,6 +16,11 @@ You have 3 options to run this example.
 2. Docker API Image
 3. Automated Solution (single solution)
 
+## Whats gonna happen?
+This API when ran under an empty database, will generate Its schema and start handling CRUD requests for endpoints:
+1. `/_api/v1/todos`
+2. `/_api/v1/users`
+
 ## **Important!**
 Before you start runnig this API, you need to have any postgresql empty database with the following parameters:
 * Host - IP Address for the database connection
@@ -81,6 +86,17 @@ Given this, you have comething like this:
 
 Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are the sripts A, B and C; and database has stored only scipts A and B, next time Knex exetuce its migration API It will execute script C in order to have Database on latest version
 
+## Having this API as exmple
+Having an empty postgressql database, this API will:
+1. Validate connection to Database by calling `knex.migrate.currentVersion()` inside _**KnexDB.js**_
+2. Validate Databse version by:
+  1. Calling `knex.migrate.latest()` inside _**KnexDB.js**_
+  2. Knex will detect that databse is empty and will generate its schema by executing migrations sciprts inside `server/migrations` by ASC order: First todo_schema and then users_table
+  3. Knex will set table _**knex_migrations**_ to save a checkpoint for this ran migrtions.
+3. Start listening on port 3000  
+
+
+
 # How to Use KneJS Migrations API
 You can use It either by CLI or It's own module.
 
@@ -118,6 +134,22 @@ knex migrate:make "Name_Of_Your_Script"
 
 This will create on your migrations folder a file named with a timestap and the given name.
 
+
+### Migration Script Structure
+Each script consist in an Up and Down function which are required to return the Promise parameter.
+1. Up - Is executed when migration.latests is called
+2. Down - Is executed when migration.rollback is called
+
+```
+exports.up = function(knex, Promise) {
+
+};
+
+exports.down = function(knex, Promise) {
+
+};
+```
+
 ## Running a migration
 ```
 knex migrate:latest
@@ -137,4 +169,4 @@ _**You can see this in action on `KnexDB.js` file**_
 ```
 knex migrate:rollback
 ```
-Knex will execute each scripts from latest to oldest by calling their `down` function
+Knex will execute each scripts from latest migration by calling their `down` function
