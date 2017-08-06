@@ -4,6 +4,7 @@
   "description": "Express API for continuous integration and delivery using Any SQL Database (Postgres as example), Knex and Docker. -Always set your DB to latest version at API exec",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker-run-postgres": "docker-machine ssh default docker run --name pg_api -p 5432:5432 -v pg_api:/var/lib/postgresql/data -e POSTGRES_DB=db_api -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=qwerty -d postgres",
     "docker-rm-postgres": "docker-machine ssh default docker rm -f pg_api && docker-machine ssh default docker volume rm -f pg_api"
@@ -11,8 +12,10 @@
   "author": "Oscar Dav. Hernandez Hdz.",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "knex": "^0.13.0",
+    "lodash": "^4.17.4",
     "nodemon": "^1.11.0",
     "pg": "^7.1.0"
   }
