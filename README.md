@@ -21,6 +21,20 @@ This API when ran under an empty database, will generate Its schema and start ha
 1. `/_api/v1/todos`
 2. `/_api/v1/users`
 
+## How this Works
+Having an empty postgressql database, this API will:
+1. Validate connection to Database by calling `knex.migrate.currentVersion()` inside _**KnexDB.js**_
+2. Validate Databse version by:
+  1. Calling `knex.migrate.latest()` inside _**KnexDB.js**_
+  2. Knex will detect that databse is empty and will generate its schema by executing migrations sciprts inside `server/migrations` by ASC order: First todo_schema and then users_table
+  3. Knex will set table _**knex_migrations**_ to save a checkpoint for this ran migrtions.
+  ![knex_migartions](./knex_migrations.PNG)
+3. Start listening on port 3000  
+
+If everithing was correct, you should get something like this printed on your terminal:
+![npm_start](./npm_start.PNG)
+
+
 ## **Important!**
 Before you start runnig this API, you need to have any postgresql empty database with the following parameters:
 * Host - IP Address for the database connection
@@ -81,21 +95,7 @@ What KnexJS does, is you start using it's own migrations API, It creates a coupl
 1. A row for each migration script that has been run
 2. For all rows, it adds an integer that stores in which migration was executed that script.
 
-Given this, you have comething like this:  
-[Image for table]()
-
 Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are the sripts A, B and C; and database has stored only scipts A and B, next time Knex exetuce its migration API It will execute script C in order to have Database on latest version
-
-## Having this API as exmple
-Having an empty postgressql database, this API will:
-1. Validate connection to Database by calling `knex.migrate.currentVersion()` inside _**KnexDB.js**_
-2. Validate Databse version by:
-  1. Calling `knex.migrate.latest()` inside _**KnexDB.js**_
-  2. Knex will detect that databse is empty and will generate its schema by executing migrations sciprts inside `server/migrations` by ASC order: First todo_schema and then users_table
-  3. Knex will set table _**knex_migrations**_ to save a checkpoint for this ran migrtions.
-3. Start listening on port 3000  
-
-
 
 # How to Use KneJS Migrations API
 You can use It either by CLI or It's own module.
