@@ -70,7 +70,7 @@ npm install
 npm start
 ```
 
-## Running Docker API Image
+## Running Docker API Image - Working on It...
 This option will build and run a docker image out of this API and will connect to any provided postgressql database configuration
 1. Build Image with:  
 ```
@@ -82,7 +82,7 @@ docker run --name cicd_api -e DB_HOST="" -e DB_USER="" -e DB_PASS="" -e DB_NAME=
 ```
 
 
-## Running Automated Solution (Docker-Compose)
+## Running Automated Solution (Docker-Compose) - Working on It...
 This options will generate two containers: One for the API and another for the postgressql
 
 ....
@@ -95,7 +95,11 @@ What KnexJS does, is you start using it's own migrations API, It creates a coupl
 1. A row for each migration script that has been run
 2. For all rows, it adds an integer that stores in which migration was executed that script.
 
-Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are the sripts A, B and C; and database has stored only scipts A and B, next time Knex exetuce its migration API It will execute script C in order to have Database on latest version
+Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are the sripts A, B and C; and database has stored only scipts A and B, next time Knex exetuce its migration API It will execute script C in order to have Database on latest version.
+
+
+![knex_migartions](./knex_migrations.PNG)
+* In this picture, you can see that the firs migration ran todo and users scripts.
 
 # How to Use KneJS Migrations API
 You can use It either by CLI or It's own module.
