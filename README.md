@@ -1,32 +1,32 @@
 # Configure your machine for development
-1. Install Nodemon CLI to run start API Daemon with:  
+1. Install Nodemon CLI:  
 ```
 npm install -g nodemon
 ```
 
-2. Install [KnexJS](http://knexjs.org/#Migrations-API) CLI to handle migrations/seeds manually:  
+2. Install [KnexJS](http://knexjs.org/#Migrations-API) CLI:  
 ```
 npm install -g knex
 ```  
-3. Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgres/api containers
+3. (OPTIONAL) Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgresql/api containers 
 
 # Getting Started with Example
 You have 3 options to run this example.
 1. Local API
 2. Docker API Image
-3. Automated Solution (single solution)
+3. Automated Solution (Docker-compose)
 
 ## Whats gonna happen?
-This API when ran under an empty database, will generate Its schema and start handling CRUD requests for endpoints:
+This API when executed over an empty database, will generate Its schema and start handling CRUD requests for endpoints:
 1. `/_api/v1/todos`
 2. `/_api/v1/users`
 
-## How this Works
+## How It Works?
 Having an empty postgressql database, this API will:
 1. Validate connection to Database by calling `knex.migrate.currentVersion()` inside _**KnexDB.js**_
-2. Validate Databse version by:
+2. Validate Database version by:
   1. Calling `knex.migrate.latest()` inside _**KnexDB.js**_
-  2. Knex will detect that databse is empty and will generate its schema by executing migrations sciprts inside `server/migrations` by ASC order: First todo_schema and then users_table
+  2. Knex will detect that database is empty and will generate its schema by executing migrations sciprts inside `server/migrations` by ASC order. in this cas: First _todo_schema_, then _users_table_
   3. Knex will set table _**knex_migrations**_ to save a checkpoint for this ran migrtions.
   ![knex_migartions](./knex_migrations.PNG)
 3. Start listening on port 3000  
@@ -35,14 +35,14 @@ If everithing was correct, you should get something like this printed on your te
 ![npm_start](./npm_start.PNG)
 
 
-## **Important!**
+## **Postgresql Database Needed!**
 Before you start runnig this API, you need to have any postgresql empty database with the following parameters:
 * Host - IP Address for the database connection
 * Database name - Name for the Database that API will use
 * Database user - User which must have permission for given database name
 * Database user password - Password for previous user
 
-If you dont have any postgresql database up, you can use the provided docker solution by Running a postgresql container with:  
+If you dont have any postgresql database up, you can use the provided docker docker-solution inside _**package.json**_ by Running a postgresql container with:  
 
 ```
 npm run docker-run-postgres
@@ -52,14 +52,14 @@ This container has the following configuration:
    * Database name (**DB_NAME**): **db_api**
    * Database user (**DB_USER**): **developer**
    * Database user password (**DB_PASS**): **qwerty**
-   * Database Host (IP Address):
-     * If you are using _LINUX_: Use localhost has **DB_HOST**
-     * If you are using _MAC_ or _Windows_, your docker daemon might be running on a docker-machine. Type `docker-machine ip` to get It's IP adress and use it as: **DB_HOST**
+   * Database Host (**DB_HOST**):
+     * If you are using _LINUX_: Use localhost
+     * If you are using _MAC_ or _Windows_, your docker daemon might be running on a docker-machine. Type `docker-machine ip` to get It's IP address and use it
 
 
 
 ## Running local API - Development
-This options will let you run this API with your Terminal/Console using Postgres Container. Recommended for development as this uses nodemon to watch any change and restart.
+This option will run this API iver your Terminal/Console using Postgres Container. Recommended for development as this uses nodemon to watch any change and restart.
 1. Install dependencies  
 ```
 npm install
@@ -89,13 +89,13 @@ This options will generate two containers: One for the API and another for the p
 
 
 # Why CI/CD?
-The key for these deatures is [KnexJs](www.knexjs.org) library for comunication between API and DB.
+The key for these features is [KnexJs](www.knexjs.org) library for handling comunication between API and DB.
 
-What KnexJS does, is you start using it's own migrations API, It creates a couple of tables on the database provided for handling Database versioning. Basically the information stored in this tables is:
+What does KnexJS do??, is you start using it's own migrations API, It creates a couple of tables on the database provided for handling Database versioning. Basically the information stored in this tables is:
 1. A row for each migration script that has been run
-2. For all rows, it adds an integer that stores in which migration was executed that script.
+2. For all rows, it adds an integer that stores in which migration was executed that script (**version**).
 
-Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are the sripts A, B and C; and database has stored only scipts A and B, next time Knex exetuce its migration API It will execute script C in order to have Database on latest version.
+Thanks to this, Knex is able to compare which sripts has been executed or not. For Example: If in the migrations folder there are scripts A, B and C; and database has stored only scipts A and B, next time Knex execute its migration API It will execute script C in order to have Database on latest version.
 
 
 ![knex_migartions](./knex_migrations.PNG)
@@ -125,9 +125,9 @@ module.exports = {
   }
 }
 ```
-The, you need to have a folder called 'migrations' (provided at previous connection object). Right there, all your migrations scripts will be stored and Knex have aknowledge of it.
+Then, you need to have a folder called 'migrations' (provided also at previous connection object). Right there, all your migrations scripts will be stored and Knex will have aknowledge of it.
 
-Now, for using the migration API, pretty much you can call it either by CLI or Its own module, but for this example lets use the CLI way.
+Now, for using the migration API, pretty much you can call it either by CLI or Its own module
 
 Finally you need to be in the same path as your 'knexfile', as CLI command is gonna read it to get the connection ojbect.  
 
