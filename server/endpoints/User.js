@@ -5,23 +5,23 @@ var router = express.Router();
 
 var {User, TABLE_NAME, ALLOWED_PARAMS} = require('../models/User');
 
-router.get('/users', (req, res) => {
+router.get('/user', (req, res) => {
   knex(TABLE_NAME).select('*')
-  .then((todos) => {
-    res.status(200).send({todos})
+  .then((users) => {
+    res.status(200).send({ users})
   })
   .catch((err) => {
     res.status(400).send(err);
   })
 })
 
-router.get('/users/:id', (req, res) => {
+router.get('/user/:id', (req, res) => {
   var id = req.params.id;
   if ( +id ) {
     knex(TABLE_NAME).select('*').where({id})
     .then((todo) => {
       if ( todo[0] ) res.status(200).send(todo[0])
-      else res.status(404).send({message: 'Todo Not Found'});
+      else res.status(404).send({message: 'User Not Found'});
     })
     .catch((err) => {
       res.status(500).send(err);
@@ -32,7 +32,7 @@ router.get('/users/:id', (req, res) => {
   }
 })
 
-router.post('/users', (req, res) => {
+router.post('/user', (req, res) => {
 
   var data = _.pick(req.body, ALLOWED_PARAMS);
   var todo = new Todo(data);
@@ -53,7 +53,7 @@ router.post('/users', (req, res) => {
 
 })
 
-router.patch('/users/:id', (req, res) => {
+router.patch('/user/:id', (req, res) => {
   var id = req.params.id;
   var data = _.pick(req.body, ALLOWED_PARAMS);
 

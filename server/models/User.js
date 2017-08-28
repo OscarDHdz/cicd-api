@@ -25,4 +25,4 @@ class User {
 
 }
 
-module.exports = {Todo, TABLE_NAME, ALLOWED_PARAMS}
+module.exports = {User, TABLE_NAME, ALLOWED_PARAMS}
