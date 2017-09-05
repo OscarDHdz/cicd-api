@@ -6,9 +6,9 @@
   "scripts": {
     "start": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docker-run-postgres": "docker-machine ssh default docker run --name pg_api -p 5432:5432 -v pg_api:/var/lib/postgresql/data -e POSTGRES_DB=db_api -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=qwerty -d postgres",
-    "docker-start-postgres": "docker-machine ssh default docker start pg_api",
-    "docker-rm-postgres": "docker-machine ssh default docker rm -f pg_api && docker-machine ssh default docker volume rm -f pg_api"
+    "docker-run-postgres": "docker-machine ssh default docker run --name cicd_pg -p 5432:5432 -v cicd_pg:/var/lib/postgresql/data -e POSTGRES_DB=db_api -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=qwerty -d postgres",
+    "docker-start-postgres": "docker-machine ssh default docker start cicd_pg",
+    "docker-rm-postgres": "docker-machine ssh default docker rm -f cicd_pg && docker-machine ssh default docker volume rm -f cicd_pg"
   },
   "author": "Oscar David Hernandez Hdz.",
   "license": "ISC",

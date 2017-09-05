@@ -8,18 +8,15 @@ npm install -g nodemon
 ```
 npm install -g knex
 ```  
-3. (OPTIONAL) Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgresql/api containers 
+3. (OPTIONAL) Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgresql/api containers
 
 # Getting Started with Example
-You have 3 options to run this example.
-1. Local API
-2. Docker API Image
-3. Automated Solution (Docker-compose)
+
 
 ## Whats gonna happen?
 This API when executed over an empty database, will generate Its schema and start handling CRUD requests for endpoints:
 1. `/_api/v1/todos`
-2. `/_api/v1/users`
+2. `/_api/v1/user`
 
 ## How It Works?
 Having an empty postgressql database, this API will:
@@ -74,13 +71,13 @@ npm start
 This option will build and run a docker image out of this API and will connect to any provided postgressql database configuration
 1. Build Image with:  
 ```
-docker build -t ... .
+docker build -t cicd-api .
 ```
-2. Run Image by setting Database Env variables (DB_HOST, DB_USER, DB_PASS) with:  
+2. Run Image by setting Database Environment variables (DB_HOST, DB_USER, DB_PASS) with:  
 ```
-docker run --name cicd_api -e DB_HOST="" -e DB_USER="" -e DB_PASS="" -e DB_NAME=""...
+docker run --name cicd_api -p 3000:3000 -e DB_HOST="dbHost" -e DB_USER="dbUser" -e DB_PASS="dbPass" -e DB_NAME="dbName" cicd-api
 ```
-
+3. Start making requests :D (If using Windows or Mac, don't forget to use docker-machine api to access the Endpoint)
 
 ## Running Automated Solution (Docker-Compose) - Working on It...
 This options will generate two containers: One for the API and another for the postgressql
