@@ -67,7 +67,7 @@ npm install
 npm start
 ```
 
-## Running Docker API Image - Working on It...
+## Running Docker API Image
 This option will build and run a docker image out of this API and will connect to any provided postgressql database configuration
 1. Build Image with:  
 ```
@@ -79,11 +79,13 @@ docker run --name cicd_api -p 3000:3000 -e DB_HOST="dbHost" -e DB_USER="dbUser" 
 ```
 3. Start making requests :D (If using Windows or Mac, don't forget to use docker-machine api to access the Endpoint)
 
-## Running Automated Solution (Docker-Compose) - Working on It...
+## Running Automated Solution (Docker-Compose)
 This options will generate two containers: One for the API and another for the postgressql
 
-....
-
+1. Run Compose
+```
+docker-compose up
+```
 
 # Why CI/CD?
 The key for these features is [KnexJs](www.knexjs.org) library for handling comunication between API and DB.
@@ -98,7 +100,7 @@ Thanks to this, Knex is able to compare which sripts has been executed or not. F
 ![knex_migartions](./knex_migrations.PNG)
 * In this picture, you can see that the firs migration ran todo and users scripts.
 
-# How to Use KneJS Migrations API
+# How to Use KnexJS Migrations API
 You can use It either by CLI or It's own module.
 
 First of all, you need to have configured your _knexfile_ which basically contains the connection object.
