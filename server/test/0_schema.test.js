@@ -59,7 +59,7 @@ describe('SCHEMA TEST', function() {
 
 
     it('Should insert a todo', function (done) {
-      knex(TABLE_NAME_TODOS).insert(todos[0])
+      knex(TABLE_NAME_TODOS).insert(todos[0]).returning('*')
       .then((res) => {
         if ( CLIENT === 'sqlite3' ) todos[0].id = res[0];
         else todos[0].id = res[0].id;
@@ -69,7 +69,7 @@ describe('SCHEMA TEST', function() {
     })
 
     it('Should insert a second todo', function (done) {
-      knex(TABLE_NAME_TODOS).insert(todos[1])
+      knex(TABLE_NAME_TODOS).insert(todos[1]).returning('*')
       .then((res) => {
         if ( CLIENT === 'sqlite3' ) todos[1].id = res[0];
         else todos[1].id = res[0].id;
@@ -88,7 +88,7 @@ describe('SCHEMA TEST', function() {
     })
 
     it('Should set second inserted todo as completed', function (done) {
-      knex(TABLE_NAME_TODOS).update({completed: true}).where({id: todos[1].id})
+      knex(TABLE_NAME_TODOS).update({completed: true}).where({id: todos[1].id}).returning('*')
       .then((res) => {
         return knex(TABLE_NAME_TODOS).select('*').where({id: todos[1].id})
         done()
@@ -120,7 +120,7 @@ describe('SCHEMA TEST', function() {
   describe('Users schema', function() {
 
     it('Should insert an user', function (done) {
-      knex(TABLE_NAME_USERS).insert(users[0])
+      knex(TABLE_NAME_USERS).insert(users[0]).returning('*')
       .then((res) => {
         if ( CLIENT === 'sqlite3' ) users[0].id = res[0];
         else users[0].id = res[0].id;
@@ -130,7 +130,7 @@ describe('SCHEMA TEST', function() {
     })
 
     it('Should insert a second user', function (done) {
-      knex(TABLE_NAME_USERS).insert(users[1])
+      knex(TABLE_NAME_USERS).insert(users[1]).returning('*')
       .then((res) => {
         if ( CLIENT === 'sqlite3' ) users[1].id = res[0];
         else users[1].id = res[0].id;
@@ -149,7 +149,7 @@ describe('SCHEMA TEST', function() {
     })
 
     it('Should set second inserted user username as "modified"', function (done) {
-      knex(TABLE_NAME_USERS).update({username: 'modified'}).where({id: users[1].id})
+      knex(TABLE_NAME_USERS).update({username: 'modified'}).where({id: users[1].id}).returning('*')
       .then((res) => {
         return knex(TABLE_NAME_USERS).select('*').where({id: users[1].id})
         done()
