@@ -7,7 +7,7 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
 ## Standalon
 ### Start
   1. Install dependencies   
-  ```
+  ```  
   npm install
   ```
   2. Start Web service
@@ -17,6 +17,7 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
   3. Start making `POST, GET, PATCH & DELETE` requests at `http://localhost:3000/_api/v1/` for:
 
     * `/todos` Model:  
+
     ```
     {
       id: [int]
@@ -25,13 +26,16 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
       completed: [boolean],
     }
     ```
-    * `/users` Model:  
+
+    * `/users` Model:
+
     ```
     {
       id: [int]
       username:  [string],
     }
     ```
+
 #### **Important**
   By default **SQLite** is selected for storage, so you can hit start and Web Service will create local database. If you want to select **PostgreSQL** as storage, or specify **SQLite** filename, continue to Configuration
 ### Configuration

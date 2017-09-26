@@ -2,6 +2,7 @@
 var express = require('express');
 var knex = require('./KnexDB.js');
 var bodyParser = require('body-parser');
+var path = require('path');
 
 var app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,8 @@ app.use('/_api/v1', TodoEnpoints);
 var UserEndpoints = require('./endpoints/User');
 app.use('/_api/v1', UserEndpoints);
 
+// Front-end
+app.use('/', express.static(path.join(__dirname, 'public')));
 
 // Validate Dabatabase connection and Start API --------------------------------
 knex.Validate()
