@@ -5,7 +5,7 @@ var router = express.Router();
 
 var {User, TABLE_NAME, ALLOWED_PARAMS} = require('../models/User');
 
-router.get('/user', (req, res) => {
+router.get('/users', (req, res) => {
   knex(TABLE_NAME).select('*')
   .then((users) => {
     res.status(200).send({ users})
@@ -15,7 +15,7 @@ router.get('/user', (req, res) => {
   })
 })
 
-router.get('/user/:id', (req, res) => {
+router.get('/users/:id', (req, res) => {
   var id = req.params.id;
   if ( +id ) {
     knex(TABLE_NAME).select('*').where({id})
@@ -32,18 +32,19 @@ router.get('/user/:id', (req, res) => {
   }
 })
 
-router.post('/user', (req, res) => {
+router.post('/users', (req, res) => {
 
   var data = _.pick(req.body, ALLOWED_PARAMS);
-  var todo = new Todo(data);
+  var user = new User(data);
 
-  if ( todo.Validate() ) {
+  if ( user.Validate() ) {
 
-    delete todo.id;
+    delete user.id;
 
-    knex(TABLE_NAME).insert(todo).returning('*')
-    .then((insertedTodo) => {
-      res.status(200).send(insertedTodo[0])
+    knex(TABLE_NAME).insert(user).returning('*')
+    .then((insertedUser) => {
+      if ( process.env.DB_CLIENT === 'sqlite3' ) return res.status(200).send({id: insertedUser[0]})
+      res.status(200).send(insertedUser[0])
     })
     .catch((err) => res.status(500).status({error: err}))
   }
@@ -53,15 +54,16 @@ router.post('/user', (req, res) => {
 
 })
 
-router.patch('/user/:id', (req, res) => {
+router.patch('/users/:id', (req, res) => {
   var id = req.params.id;
   var data = _.pick(req.body, ALLOWED_PARAMS);
 
 
   if ( +id ) {
     knex(TABLE_NAME).update(data).where({id}).returning('*')
-    .then((todo) => {
-      if ( todo[0] ) res.status(200).send(todo[0])
+    .then((user) => {
+      if ( process.env.DB_CLIENT === 'sqlite3' ) return  res.sendStatus(200);
+      if ( user[0] ) res.status(200).send(user[0])
       else res.status(404).send({message: 'Todo Not Found'});
     })
     .catch((err) => {

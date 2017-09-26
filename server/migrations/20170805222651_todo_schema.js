@@ -4,9 +4,12 @@ exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('todos', function (table) {
       table.increments('id');
-      table.text('title');
-      table.text('body');
-      table.boolean('completed');
+      table.text('title')
+      .defaultTo('');
+      table.text('body')
+      .defaultTo('');
+      table.boolean('completed')
+      .defaultTo(false);
     }),
   ])
 

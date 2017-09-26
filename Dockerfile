@@ -8,4 +8,7 @@ COPY . .
 
 RUN npm install
 
+ENV NODE_ENV=prod
+ENV VALIDATE_DB=ON
+
 CMD ["npm", "start"]

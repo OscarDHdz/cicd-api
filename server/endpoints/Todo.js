@@ -43,6 +43,7 @@ router.post('/todos', (req, res) => {
 
     knex(TABLE_NAME).insert(todo).returning('*')
     .then((insertedTodo) => {
+      if ( process.env.DB_CLIENT === 'sqlite3' ) return res.status(200).send({id: insertedTodo[0]})
       res.status(200).send(insertedTodo[0])
     })
     .catch((err) => res.status(500).status({error: err}))
@@ -61,7 +62,8 @@ router.patch('/todos/:id', (req, res) => {
   if ( +id ) {
     knex(TABLE_NAME).update(data).where({id}).returning('*')
     .then((todo) => {
-      if ( todo[0] ) res.status(200).send(todo[0])
+      if ( process.env.DB_CLIENT === 'sqlite3' ) return  res.sendStatus(200);
+      if ( todo[0] ) res.status(200).send(todo[0]);
       else res.status(404).send({message: 'Todo Not Found'});
     })
     .catch((err) => {

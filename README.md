@@ -1,3 +1,86 @@
+# Quick Start Guide
+You can run this RESTful API with as a **standalon** web service or a docker **container**.
+And for either case, you choice what to use, a **SQLite** or **PostgreSQL** database.
+
+
+
+## Standalon
+### Start
+  1. Install dependencies   
+  ```
+  npm install
+  ```
+  2. Start Web service
+  ```
+  npm start
+  ```  
+  3. Start making `POST, GET, PATCH & DELETE` requests at `http://localhost:3000/_api/v1/` for:
+
+    * `/todos` Model:  
+    ```
+    {
+      id: [int]
+      title:  [string],
+      body: [string],
+      completed: [boolean],
+    }
+    ```
+    * `/users` Model:  
+    ```
+    {
+      id: [int]
+      username:  [string],
+    }
+    ```
+
+#### **Important**
+  By default **SQLite** is selected for storage, so you can hit start and Web Service will create local database. If you want to select **PostgreSQL** as storage, or specify **SQLite** filename, continue to Configuration
+
+### Configuration
+  Replace attributes from `development` object at `/server/configs/configs.js` to match your needs.
+
+  ```
+  development: {
+    NODE_ENV: 'development',
+    PORT: 3000,
+    VALIDATE_DB: 'ON',
+    ...
+  }
+  ```
+
+  If you want to use SQLite (Default), set:
+    * DB_CLIENT to **'sqlite3'**
+    * DB_FILE to give a name to the SQLite database  
+
+
+    ```
+    development: {
+      ...
+      DB_CLIENT: process.env.DB_CLIENT || 'sqlite3',
+      DB_FILE: process.env.DB_FILE || {{YourSQLiteFileName}}
+    }
+    ```
+
+  If you want to use PostgreSQL, set:  
+    * DB_CLIENT to **'pg'**
+    * DB_HOST to PostgreSQL host
+    * DB_NAME to target empty database
+    * DB_USER to user with Rights over provided DB_NAME
+    * DB_PASS to DB_USER's password  
+
+    ```
+    development: {
+      ...
+      DB_CLIENT: process.env.DB_CLIENT || 'pg',
+      DB_HOST: process.env.DB_HOST || {{PostgreSQLHost}},
+      DB_NAME: process.env.DB_NAME || {{EmptyDatabaseName}},
+      DB_USER: process.env.DB_USER || {{DB_NAMEUser}},
+      DB_PASS: process.env.DB_PASS || {{DB_USERPassword}},
+    }
+    ```
+
+
+
 # Configure your machine for development
 1. Install Nodemon CLI:  
 ```
@@ -8,10 +91,9 @@ npm install -g nodemon
 ```
 npm install -g knex
 ```  
-3. (OPTIONAL) Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgresql/api containers
+3. (OPTIONAL) Install [Docker](https://docs.docker.com/engine/installation/#supported-platforms) for running postgresql container
 
 # Getting Started with Example
-
 
 ## Whats gonna happen?
 This API when executed over an empty database, will generate Its schema and start handling CRUD requests for endpoints:

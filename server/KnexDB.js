@@ -2,7 +2,7 @@ var {env} = require('./configs/initconfig');
 var configs = require('./knexfile');
 var knex = require('knex')(configs[env]);
 
-process.env.VALIDATE_DB = 'ON'
+// process.env.VALIDATE_DB = 'ON'
 
 knex.Validate = ( ) => {
 
@@ -50,6 +50,7 @@ var KeepValidatingConnection = ( success ) => {
     knex.migrate.currentVersion()
     .then((res) => resolve(true))
     .catch((err) => {
+      console.log(err);
       console.log("[31m%s[0m", `# There was a problem with database connection. Retrying connection...`);
       return KeepValidatingConnection(false);
     })

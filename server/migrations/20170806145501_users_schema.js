@@ -3,7 +3,8 @@ exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('users', function (table) {
       table.increments('id');
-      table.text('username');
+      table.text('username')
+      .defaultTo('');
     }),
   ])
 };
