@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha server/test/**.test.js",
+    "test-watch": "nodemon -x \"npm  test\"",
     "docker-run-postgres": "docker-machine ssh default docker run --name cicd_pg -p 5432:5432 -v cicd_pg:/var/lib/postgresql/data -e POSTGRES_DB=db_api -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=qwerty -d postgres",
     "docker-start-postgres": "docker-machine ssh default docker start cicd_pg",
     "docker-rm-postgres": "docker-machine ssh default docker rm -f cicd_pg && docker-machine ssh default docker volume rm -f cicd_pg"
@@ -20,5 +21,10 @@
     "nodemon": "^1.11.0",
     "pg": "^7.1.0",
     "sqlite3": "^3.1.12"
+  },
+  "devDependencies": {
+    "expect": "^21.1.0",
+    "mocha": "^3.5.3",
+    "supertest": "^3.0.0"
   }
 }
