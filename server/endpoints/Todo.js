@@ -32,6 +32,22 @@ router.get('/todos/:id', (req, res) => {
   }
 })
 
+router.delete('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  if ( +id ) {
+    knex(TABLE_NAME).where({id}).del()
+    .then((todo) => {
+      res.sendStatus(201);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    })
+  }
+  else {
+    res.status(400).send({message: 'Invalid Id'})
+  }
+})
+
 router.post('/todos', (req, res) => {
 
   var data = _.pick(req.body, ALLOWED_PARAMS);

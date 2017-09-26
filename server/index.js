@@ -28,3 +28,7 @@ knex.Validate()
     console.log(`[36m%s[0m`, `# API Listening at: http://localhost:${PORT}`);
   });
 })
+
+
+
+module.exports = {app};

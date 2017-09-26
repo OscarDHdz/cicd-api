@@ -9,36 +9,54 @@ const TABLE_NAME_USERS = TABLE_NAME;
 
 describe('SCHEMA TEST', function() {
 
+  const CLIENT = process.env.DB_CLIENT || 'sqlite3';
 
   var todos = [];
+  var users = [];
 
-  const CLIENT = process.env.DB_CLIENT || 'sqlite3';
+  // Prepare input data
+  before(function (done) {
+
+    todos = [
+      new Todo({
+        title: 'Todo #1',
+        body: 'Body del todo #1'
+      }),
+      new Todo({
+        title: 'Todo #2',
+        body: 'Este body deberia estar completado',
+        completed: false
+      })
+    ]
+    for (var i = 0; i < todos.length; i++) {
+      delete todos[i].id;
+    }
+
+    users = [
+      new User({
+        username: "Oscar"
+      }),
+      new User({
+        username: "Brenda"
+      })
+    ]
+    for (var i = 0; i < users.length; i++) {
+      delete users[i].id;
+    }
+
+
+    knex.Validate( 'init' )
+    .then((res) => knex(TABLE_NAME_TODOS).delete() )
+    .then((res) => knex(TABLE_NAME_USERS).delete())
+    .then((res) => done())
+    .catch((err) => done(err))
+
+
+  })
 
   describe('Todos schema', function() {
 
-    // Prepare input data
-    before(function (done) {
 
-      todos = [
-        new Todo({
-          title: 'Todo #1',
-          body: 'Body del todo #1'
-        }),
-        new Todo({
-          title: 'Todo #2',
-          body: 'Este body deberia estar completado',
-          completed: false
-        })
-      ]
-      for (var i = 0; i < todos.length; i++) {
-        delete todos[i].id;
-      }
-
-      knex(TABLE_NAME_TODOS).delete()
-      .then((res) => done())
-      .catch((err) => done(err))
-
-    })
 
     it('Should insert a todo', function (done) {
       knex(TABLE_NAME_TODOS).insert(todos[0])
@@ -100,27 +118,6 @@ describe('SCHEMA TEST', function() {
   });
 
   describe('Users schema', function() {
-
-    // Prepare input data
-    before(function (done) {
-
-      users = [
-        new User({
-          username: "Oscar"
-        }),
-        new User({
-          username: "Brenda"
-        })
-      ]
-      for (var i = 0; i < users.length; i++) {
-        delete users[i].id;
-      }
-
-      knex(TABLE_NAME_USERS).delete()
-      .then((res) => done())
-      .catch((err) => done(err))
-
-    })
 
     it('Should insert an user', function (done) {
       knex(TABLE_NAME_USERS).insert(users[0])

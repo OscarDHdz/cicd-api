@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/index.js",
-    "test": "mocha server/test/**.test.js",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/test/**.test.js",
     "test-watch": "nodemon -x \"npm  test\"",
     "docker-run-postgres": "docker-machine ssh default docker run --name cicd_pg -p 5432:5432 -v cicd_pg:/var/lib/postgresql/data -e POSTGRES_DB=db_api -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=qwerty -d postgres",
     "docker-start-postgres": "docker-machine ssh default docker start cicd_pg",

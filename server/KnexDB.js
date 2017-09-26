@@ -2,12 +2,10 @@ var {env} = require('./configs/initconfig');
 var configs = require('./knexfile');
 var knex = require('knex')(configs[env]);
 
-// process.env.VALIDATE_DB = 'ON'
-
-knex.Validate = ( ) => {
+knex.Validate = ( flag ) => {
 
   return new Promise((resolve, reject) => {
-    if ( process.env.VALIDATE_DB === 'ON' ) {
+    if ( flag === 'init' ||  process.env.VALIDATE_DB === 'ON' ) {
       console.log("[36m%s[0m", `# Validating Database connnection and migrations...`);
 
       KeepValidatingConnection()
