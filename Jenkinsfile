@@ -18,7 +18,7 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Preparation') {
       steps {
-        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=db_api  -e POSTGRES_USER=developer  -e POSTGRES_PASSWORD=qwerty  -d postgres:$PG_CONTAINER_TAG'
+        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=db_api  -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=qwerty  -d postgres:$PG_CONTAINER_TAG'
       }
     }
     stage('Build') {
@@ -33,7 +33,7 @@ docker pull postgres:$PG_CONTAINER_TAG'''
             sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/webapp npm test'
             
           },
-          "": {
+          "error": {
             sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
             
           }
@@ -46,7 +46,7 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     PG_CONTAINER_TAG = 'latest'
     DB_NAME = 'testdb'
     DB_FILE = 'testdb'
-    DB_USER = 'tester'
+    DB_USER = 'developer'
     DB_HOST = 'localhost'
     DB_PASS = 'qwerty'
     DATABASE_CONTAINER_NAME = 'webapp_pgdb'
