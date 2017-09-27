@@ -9,7 +9,7 @@ pipeline {
             
           },
           "PostgreSQL Container": {
-            sh 'docker run --name webapp_pg_wrapper  -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=db_api  -e POSTGRES_USER=developer  -e POSTGRES_PASSWORD=qwerty  -d postgres:$PG_CONTAINER_TAG'
+            sh 'docker run --name webapp_pg_wrapper  -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=$DB_NAME -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS  -d postgres:$PG_CONTAINER_TAG'
             
           }
         )
@@ -22,12 +22,26 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'docker run --name webapp oscardhdz/webapp npm test'
+        parallel(
+          "Test SQLite": {
+            sh 'docker run -e DB_CLIENT=sqlite3 DB_FILE=sqlite --name webapp oscardhdz/webapp npm test'
+            
+          },
+          "Test PostgreSQL": {
+            sh 'docker run -e DB_CLIENT=pg DB_HOST=localhost -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER --name webapp oscardhdz/webapp npm test'
+            
+          }
+        )
       }
     }
   }
   environment {
     NODE_CONTAINER_TAG = 'alpine'
     PG_CONTAINER_TAG = 'latest'
+    DB_NAME = 'testdb'
+    DB_FILE = 'testdb'
+    DB_USER = 'tester'
+    DB_HOST = 'localhost'
+    DB_PASS = 'qwerty'
   }
 }
