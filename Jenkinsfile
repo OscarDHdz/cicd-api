@@ -4,15 +4,21 @@ pipeline {
     stage('Initialize') {
       steps {
         parallel(
-          "Node Container": {
-            sh 'docker pull node:$NODE_CONTAINER_TAG'
+          "Create Network": {
+            sh 'docker network create webapp'
             
           },
-          "PostgreSQL Container": {
-            sh 'docker run --name webapp_pg_wrapper  -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=$DB_NAME -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS  -d postgres:$PG_CONTAINER_TAG'
+          "Pull Docker Images": {
+            sh '''docker pull node:$NODE_CONTAINER_TAG
+docker pull postgres:$PG_CONTAINER_TAG'''
             
           }
         )
+      }
+    }
+    stage('Preparation') {
+      steps {
+        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=db_api  -e POSTGRES_USER=developer  -e POSTGRES_PASSWORD=qwerty  -d postgres:$PG_CONTAINER_TAG'
       }
     }
     stage('Build') {
@@ -23,12 +29,12 @@ pipeline {
     stage('Test') {
       steps {
         parallel(
-          "Test SQLite": {
-            sh 'docker run --name webapp_sqlite -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/webapp npm test'
+          "Test": {
+            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/webapp npm test'
             
           },
-          "Test PostgreSQL": {
-            sh 'docker run --name webapp_postgres -e DB_CLIENT=pg -e DB_HOST=localhost -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
+          "": {
+            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
             
           }
         )
@@ -43,5 +49,6 @@ pipeline {
     DB_USER = 'tester'
     DB_HOST = 'localhost'
     DB_PASS = 'qwerty'
+    DATABASE_CONTAINER_NAME = 'webapp_pgdb'
   }
 }
