@@ -17,12 +17,12 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'docker run --name webapp_node_wrapper  -v $WORKSPACE:/home/workspace  node:latest  npm install'
+        sh 'docker build -t oscardhdz/webapp .'
       }
     }
     stage('Test') {
       steps {
-        sh 'docker run --name webapp_node_test  -v $WORKSPACE:/home/workspace  node:latest  npm test'
+        sh 'docker run --name webapp  oscardhdz/webapp'
       }
     }
   }
