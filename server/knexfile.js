@@ -1,3 +1,4 @@
+var path = require('path');
 var ENV = process.env.NODE_ENV || 'development';
 
 
@@ -15,13 +16,13 @@ var environment = {
     user : db_user,
     password : db_password,
     database : db_dbname,
-    filename: __dirname + '.\\database\\' + db_file + '.sqlite',
+    filename: path.join(__dirname, 'database', db_file + '.sqlite'),
   },
   migrations: {
-    directory: __dirname + '\\migrations'
+    directory: path.join(__dirname, 'migrations')
   },
   seeds: {
-    directory: __dirname + '\\seeds'
+    directory: path.join(__dirname, 'seeds')
   }
 }
 module.exports = {
