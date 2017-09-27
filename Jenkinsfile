@@ -24,11 +24,11 @@ pipeline {
       steps {
         parallel(
           "Test SQLite": {
-            sh 'docker run -e DB_CLIENT=sqlite3 DB_FILE=sqlite --name webapp oscardhdz/webapp npm test'
+            sh 'docker run --name webapp_sqlite -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/webapp npm test'
             
           },
           "Test PostgreSQL": {
-            sh 'docker run -e DB_CLIENT=pg DB_HOST=localhost -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER --name webapp oscardhdz/webapp npm test'
+            sh 'docker run --name webapp_postgres -e DB_CLIENT=pg -e DB_HOST=localhost -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
             
           }
         )
