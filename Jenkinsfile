@@ -17,7 +17,18 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'docker run --name webapp_node_wrapper  -v $WORKSPACE:/home/workspace  -d node:latest  npm install'
+        sh '''docker run --name webapp_node_wrapper \
+ -v $WORKSPACE:/home/workspace \
+ node:latest \
+ npm install'''
+      }
+    }
+    stage('Test') {
+      steps {
+        sh '''docker run --name webapp_node_wrapper \
+ -v $WORKSPACE:/home/workspace \
+ node:latest \
+ npm test'''
       }
     }
   }
