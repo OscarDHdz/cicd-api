@@ -22,7 +22,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'docker run --name webapp  oscardhdz/webapp'
+        sh 'docker run --name webapp oscardhdz/webapp npm test'
       }
     }
   }
