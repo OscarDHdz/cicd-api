@@ -1,14 +1,31 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:latest'
-    }
-    
-  }
+  agent any
   stages {
     stage('Initialize') {
       steps {
-        sh 'node -v'
+        parallel(
+          "Initialize": {
+            sh '''docker run --name node_wrapper \
+ -v ./:/home/workspace
+ -d node:latest'''
+            
+          },
+          "PostgreSQL": {
+            sh '''docker run --name cicd_pg \
+ -p 5432:5432 \
+ -v cicd_pg:/var/lib/postgresql/data \
+ -e POSTGRES_DB=db_api \
+ -e POSTGRES_USER=developer \
+ -e POSTGRES_PASSWORD=qwerty \
+ -d postgres'''
+            
+          }
+        )
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'echo \'Initialized\''
       }
     }
   }
