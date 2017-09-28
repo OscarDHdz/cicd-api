@@ -36,7 +36,24 @@ docker pull postgres:$PG_CONTAINER_TAG'''
           },
           "error": {
             sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
-            sh 'webapp_postgres'
+            sh 'docker rm -f webapp_postgres'
+            
+          }
+        )
+      }
+    }
+    stage('Clean') {
+      steps {
+        parallel(
+          "Workspace": {
+            cleanWs(cleanWhenSuccess: true)
+            
+          },
+          "Docker": {
+            sh '''echo 'Removing Postgres container'
+docker rm -f webapp_pgdb'''
+            sh '''echo 'Removing docker network'
+docker network rm network'''
             
           }
         )
