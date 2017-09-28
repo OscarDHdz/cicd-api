@@ -23,19 +23,19 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Build') {
       steps {
-        sh 'docker build -t oscardhdz/webapp .'
+        sh 'docker build -t oscardhdz/rest-app .'
       }
     }
     stage('Test') {
       steps {
         parallel(
           "Test": {
-            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/webapp npm test'
+            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/rest-app npm test'
             sh 'docker rm -f webapp_sqlite'
             
           },
           "error": {
-            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/webapp npm test'
+            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/rest-app npm test'
             sh 'docker rm -f webapp_postgres'
             
           }
@@ -69,5 +69,6 @@ docker network rm network'''
     DB_HOST = 'localhost'
     DB_PASS = 'qwerty'
     DATABASE_CONTAINER_NAME = 'webapp_pgdb'
+    DOCKER_IMAGE_NAME = 'rest-app'
   }
 }
