@@ -47,7 +47,7 @@ docker pull postgres:$PG_CONTAINER_TAG'''
         sh '''echo 'Removing Postgres container'
 docker rm -f webapp_pgdb'''
         sh '''echo 'Removing docker network'
-docker network rm network'''
+docker network rm webapp'''
       }
     }
     stage('Artifact') {
