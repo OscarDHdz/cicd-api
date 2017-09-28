@@ -23,19 +23,19 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Build') {
       steps {
-        sh 'docker build -t oscardhdz/rest-app .'
+        sh 'docker build -t oscardhdz/$DOCKER_IMAGE_NAME .'
       }
     }
     stage('Test') {
       steps {
         parallel(
           "Test": {
-            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/rest-app npm test'
+            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/$DOCKER_IMAGE_NAME npm test'
             sh 'docker rm -f webapp_sqlite'
             
           },
           "error": {
-            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/rest-app npm test'
+            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/$DOCKER_IMAGE_NAME npm test'
             sh 'docker rm -f webapp_postgres'
             
           }
@@ -44,19 +44,15 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Clean') {
       steps {
-        parallel(
-          "Workspace": {
-            cleanWs(cleanWhenSuccess: true)
-            
-          },
-          "Docker": {
-            sh '''echo 'Removing Postgres container'
+        sh '''echo 'Removing Postgres container'
 docker rm -f webapp_pgdb'''
-            sh '''echo 'Removing docker network'
+        sh '''echo 'Removing docker network'
 docker network rm network'''
-            
-          }
-        )
+      }
+    }
+    stage('Artifact') {
+      steps {
+        sh 'docker push oscardhdz/$DOCKER_IMAGE_NAME'
       }
     }
   }
