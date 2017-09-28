@@ -18,7 +18,7 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Preparation') {
       steps {
-        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=$DB_NAME  -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS -d postgres:$PG_CONTAINER_TAG'
+        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=$DB_NAME -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS -d postgres:$PG_CONTAINER_TAG'
       }
     }
     stage('Build') {
