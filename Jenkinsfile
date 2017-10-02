@@ -4,30 +4,67 @@ pipeline {
     stage('Initialize') {
       steps {
         parallel(
-          "Node Container": {
-            sh 'docker pull node:$NODE_CONTAINER_TAG'
+          "Create Network": {
+            sh 'docker network create webapp'
             
           },
-          "PostgreSQL Container": {
-            sh 'docker run --name webapp_pg_wrapper  -p 5432:5432  -v cicd_pg:/var/lib/postgresql/data  -e POSTGRES_DB=db_api  -e POSTGRES_USER=developer  -e POSTGRES_PASSWORD=qwerty  -d postgres:$PG_CONTAINER_TAG'
+          "Pull Docker Images": {
+            sh '''docker pull node:$NODE_CONTAINER_TAG
+docker pull postgres:$PG_CONTAINER_TAG'''
             
           }
         )
       }
     }
+    stage('Preparation') {
+      steps {
+        sh 'docker run --name $DATABASE_CONTAINER_NAME --net=webapp -p 5432:5432  -e POSTGRES_DB=$DB_NAME -e POSTGRES_USER=$DB_USER -e POSTGRES_PASSWORD=$DB_PASS -d postgres:$PG_CONTAINER_TAG'
+      }
+    }
     stage('Build') {
       steps {
-        sh 'docker build -t oscardhdz/webapp .'
+        sh 'docker build -t oscardhdz/$DOCKER_IMAGE_NAME .'
       }
     }
     stage('Test') {
       steps {
-        sh 'docker run --name webapp oscardhdz/webapp npm test'
+        parallel(
+          "Test": {
+            sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/$DOCKER_IMAGE_NAME npm test'
+            sh 'docker rm -f webapp_sqlite'
+            
+          },
+          "error": {
+            sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/$DOCKER_IMAGE_NAME npm test'
+            sh 'docker rm -f webapp_postgres'
+            
+          }
+        )
+      }
+    }
+    stage('Clean') {
+      steps {
+        sh '''echo 'Removing Postgres container'
+docker rm -f webapp_pgdb'''
+        sh '''echo 'Removing docker network'
+docker network rm webapp'''
+      }
+    }
+    stage('Artifact') {
+      steps {
+        sh 'docker push oscardhdz/$DOCKER_IMAGE_NAME'
       }
     }
   }
   environment {
     NODE_CONTAINER_TAG = 'alpine'
     PG_CONTAINER_TAG = 'latest'
+    DB_NAME = 'testdb'
+    DB_FILE = 'testdb'
+    DB_USER = 'developer'
+    DB_HOST = 'localhost'
+    DB_PASS = 'qwerty'
+    DATABASE_CONTAINER_NAME = 'webapp_pgdb'
+    DOCKER_IMAGE_NAME = 'rest-app'
   }
 }
