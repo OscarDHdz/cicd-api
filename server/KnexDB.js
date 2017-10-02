@@ -2,6 +2,8 @@ var {env} = require('./configs/initconfig');
 var configs = require('./knexfile');
 var knex = require('knex')(configs[env]);
 
+const DELAY_DB_REQUEST = process.env.DELAY_DB_REQUEST || 500;
+
 knex.Validate = ( flag ) => {
 
   return new Promise((resolve, reject) => {
@@ -45,14 +47,19 @@ var KeepValidatingConnection = ( success ) => {
 
     if ( success ) resolve(true);
 
-    knex.migrate.currentVersion()
-    .then((res) => resolve(true))
-    .catch((err) => {
-      console.log(err);
-      console.log("[31m%s[0m", `# There was a problem with database connection. Retrying connection...`);
-      return KeepValidatingConnection(false);
-    })
-    .then((res2) => resolve(true))
+    setTimeout(function () {
+
+      knex.migrate.currentVersion()
+      .then((res) => resolve(true))
+      .catch((err) => {
+        console.log(err);
+        console.log("[31m%s[0m", `# There was a problem with database connection. Connection will be retried at ${DELAY_DB_REQUEST}ms...`);
+        return KeepValidatingConnection(false);
+      })
+      .then((res2) => resolve(true))
+
+    }, DELAY_DB_REQUEST);
+
 
 
   })

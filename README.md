@@ -1,10 +1,44 @@
+# Rest-app
+This repo has an automated Docker Hub build. You can check It out at:
+
+| Source                                                     |
+|------------------------------------------------------------|
+| [GitHub](https://github.com/OscarDHdz/rest-app)            |
+| [Docker Hub](https://hub.docker.com/r/oscardhdz/rest-app/) |
+
 # Quick Start Guide
-You can run this RESTful API with as a **standalon** web service or a docker **container**.
+You can run this RESTful API with as a **Standalone** web service or as a **Docker container**.
 And for either case, you choice what to use, a **SQLite** or **PostgreSQL** database.
 
 
+## **Docker container**
+If you are reading this from Docker Hub, this section Is for you! Following sections are aimed only for dev. deployment.
 
-## Standalon
+### Quick Run!
+```
+docker run --name rest-app -p 3000:3000 oscardhdz/rest-app
+```
+
+### Configuration
+You have two options, use **SQLite** (Default options), or connect to an existing **PostgreSQL** database.
+
+#### SQLite
+By default this option is selected. You need to specify the following Environment variables:
+* `DB_CLIENT`=sqlite3
+* `DB_FILE`={SQLiteDatabaseFileName}
+
+Database Volume:
+* `/home/api/database`
+
+#### PostgreSQL
+You must set the following environment variables:
+* `DB_CLIENT`=pg
+* `DB_HOST`={PostgreSQLHost}
+* `DB_NAME`={EmptyDatabaseName}
+* `DB_USER`={UserNameWhomeHasAccessToDB_NAME}
+* `DB_PASS`={PasswordForDB_USERCredential}
+
+## **Standalone (local deployment)**
 ### Start
   1. Install dependencies   
   ```  
@@ -16,18 +50,19 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
   ```  
   3. Start making `POST, GET, PATCH & DELETE` requests at `http://localhost:3000/_api/v1/` for:
 
-    * `/todos` Model:  
+* `/todos` & `/todos/:id` Model:   
 
-    ```
-    {
-      id: [int]
-      title:  [string],
-      body: [string],
-      completed: [boolean],
-    }
-    ```
+  ```
+  {
+    id: [int]
+    title:  [string],
+    body: [string],
+    completed: [boolean],
+  }
+  ```  
 
-    * `/users` Model:
+
+* `/users` & `/users/:id` Model:    
 
     ```
     {
@@ -37,7 +72,8 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
     ```
 
 #### **Important**
-  By default **SQLite** is selected for storage, so you can hit start and Web Service will create local database. If you want to select **PostgreSQL** as storage, or specify **SQLite** filename, continue to Configuration
+  By default **SQLite** is selected for storage, so you can hit start and Web Service will create local database. If you want to select **PostgreSQL** as storage, or specify **SQLite** filename, continue to Configuration section..
+
 ### Configuration
   Replace attributes from `development` object at `/server/configs/configs.js` to match your needs.
 
@@ -50,29 +86,26 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
   }
   ```
 
-  If you want to use SQLite (Default), set:
-    * DB_CLIENT to **'sqlite3'**
-    * DB_FILE to give a name to the SQLite database  
-
+If you want to use SQLite (Default), set:
+  * DB_CLIENT to **'sqlite3'**
+  * DB_FILE to give a name to the SQLite database    
 
     ```
     development: {
-      ...
       DB_CLIENT: process.env.DB_CLIENT || 'sqlite3',
       DB_FILE: process.env.DB_FILE || {{YourSQLiteFileName}}
     }
     ```
 
-  If you want to use PostgreSQL, set:  
-    * DB_CLIENT to **'pg'**
-    * DB_HOST to PostgreSQL host
-    * DB_NAME to target empty database
-    * DB_USER to user with Rights over provided DB_NAME
-    * DB_PASS to DB_USER's password  
+If you want to use PostgreSQL, set:  
+  * DB_CLIENT to **'pg'**
+  * DB_HOST to PostgreSQL host
+  * DB_NAME to target empty database
+  * DB_USER to user with Rights over provided DB_NAME
+  * DB_PASS to DB_USER's password  
 
     ```
     development: {
-      ...
       DB_CLIENT: process.env.DB_CLIENT || 'pg',
       DB_HOST: process.env.DB_HOST || {{PostgreSQLHost}},
       DB_NAME: process.env.DB_NAME || {{EmptyDatabaseName}},
@@ -80,6 +113,8 @@ And for either case, you choice what to use, a **SQLite** or **PostgreSQL** data
       DB_PASS: process.env.DB_PASS || {{DB_USERPassword}},
     }
     ```
+
+
 
 # How It Works?
   Having an empty postgressql database, this API will:
