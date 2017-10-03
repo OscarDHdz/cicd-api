@@ -55,9 +55,7 @@ docker network rm webapp'''
       steps {
         
         
-        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-          sh 'echo uname=$USERNAME pwd=$PASSWORD'
-        }
+        sh 'echo Hello World'
         
         
       }
