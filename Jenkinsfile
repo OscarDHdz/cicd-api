@@ -51,8 +51,15 @@ docker network rm webapp'''
       }
     }
     stage('Artifact') {
+      
       steps {
-        sh 'docker push oscardhdz/$DOCKER_IMAGE_NAME'
+        
+        
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+          sh 'echo uname=$USERNAME pwd=$PASSWORD'
+        }
+        
+        
       }
     }
   }
