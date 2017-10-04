@@ -5,13 +5,16 @@ pipeline {
       steps {
         parallel(
           "Create Network": {
-            sh 'docker network create webapp'
-            
+            try {
+              sh 'docker network create webapp'
+            } catch (e) {
+              sh 'Failed Network Create due: ${e}'
+            }
+
           },
           "Pull Docker Images": {
-            sh '''docker pull node:$NODE_CONTAINER_TAG
-docker pull postgres:$PG_CONTAINER_TAG'''
-            
+            sh 'docker pull node:$NODE_CONTAINER_TAG'
+            sh 'docker pull postgres:$PG_CONTAINER_TAG'
           }
         )
       }
@@ -32,12 +35,12 @@ docker pull postgres:$PG_CONTAINER_TAG'''
           "Test": {
             sh 'docker run --name webapp_sqlite --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/$DOCKER_IMAGE_NAME npm test'
             sh 'docker rm -f webapp_sqlite'
-            
+
           },
           "error": {
             sh 'docker run --name webapp_postgres --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/$DOCKER_IMAGE_NAME npm test'
             sh 'docker rm -f webapp_postgres'
-            
+
           }
         )
       }
