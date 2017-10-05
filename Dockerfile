@@ -6,6 +6,7 @@ WORKDIR /home/api
 
 COPY . .
 
+RUN npm config set registry http://registry.npmjs.org/
 RUN npm install
 
 ENV NODE_ENV=prod
