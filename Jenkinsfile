@@ -5,6 +5,7 @@ pipeline {
       steps {
         sh 'echo \'Hello World from pipeline branch!\''
         sh 'echo This message comes from a Git Push'
+        sh 'echo This should happen autimatically'
       }
     }
   }
