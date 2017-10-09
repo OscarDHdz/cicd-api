@@ -2,8 +2,7 @@ pipeline {
   agent any
 
   stages {
-
-    stage('Clean up') {
+    stage('Validate Clean Workspace') {
         steps {
             script {
                 deleteDir()
@@ -42,7 +41,6 @@ pipeline {
             }
         }
     }
-
     stage('Initialize') {
       steps {
         git([url: 'https://github.com/OscarDHdz/rest-app.git', branch: 'master'])
@@ -64,16 +62,17 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Build') {
       steps {
-        sh 'docker build -t oscardhdz/$DOCKER_IMAGE_NAME .'
+        /*sh 'docker build -t oscardhdz/$DOCKER_IMAGE_NAME .'*/
+        sh 'docker pull oscardhdz/$DOCKER_IMAGE_NAME'
       }
     }
     stage('Test') {
       steps {
         parallel(
-          "Test": {
+          "SQLte": {
             sh 'docker run --name $DOCKER_SL_TEST --net=webapp -e DB_CLIENT=sqlite3 -e DB_FILE=sqlite  oscardhdz/$DOCKER_IMAGE_NAME npm test'
           },
-          "error": {
+          "PostgreSQL": {
             sh 'docker run --name $DOCKER_PG_TEST --net=webapp -e DB_CLIENT=pg -e DB_HOST=$DATABASE_CONTAINER_NAME -e DB_NAME=$DB_NAME -e DB_PASS=$DB_PASS -e DB_USER=$DB_USER oscardhdz/$DOCKER_IMAGE_NAME npm test'
           }
         )
@@ -81,21 +80,39 @@ docker pull postgres:$PG_CONTAINER_TAG'''
     }
     stage('Clean') {
       steps {
-        sh '''echo 'Removing Postgres container'
-docker rm -f webapp_pgdb'''
-        sh '''echo 'Removing docker network'
-docker network rm webapp'''
+        sh 'echo Removing Contatainers:'
+        sh 'docker rm -f $DOCKER_PG_TEST'
+        sh 'docker rm -f $DOCKER_SL_TEST'
+        sh 'docker rm -f $DATABASE_CONTAINER_NAME'
+        sh 'docker network rm $DOCKER_NETWORK'
+
       }
     }
     stage('Artifact') {
-
       steps {
-
-
-        sh 'echo Hello World'
-
-
+        script {
+            withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-hub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                sh 'echo uname=$USERNAME pwd=$PASSWORD'
+                sh 'docker login -u $USERNAME -p $PASSWORD'
+                sh 'docker logout'
+            }
+        }
       }
+    }
+
+    stage('Deploy') {
+        steps {
+            script {
+                try {
+                    sh 'ssh -i ~/.ssh/id_rsa ubuntu@18.221.9.232 "docker rm -f rest"'
+                }
+                catch (err) {
+                    sh 'Docker: Unexisting container rest'
+                }
+            }
+            sh 'ssh -i ~/.ssh/id_rsa ubuntu@18.221.9.232 "docker pull oscardhdz/$DOCKER_IMAGE_NAME && docker run -d --network=nginx-proxy -p 3000:3000 --name=rest  -e VIRTUAL_HOST=manxdev.com -e VIRTUAL_NETWORK=nginx-proxy -e VIRTUAL_PORT=3000  -e LETSENCRYPT_HOST=manxdev.com -e LETSENCRYPT_EMAIL=oscardavid.hernandez.mx@gmail.com  oscardhdz/rest-app"'
+        }
+
     }
   }
   environment {
