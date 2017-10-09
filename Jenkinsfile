@@ -4,6 +4,7 @@ pipeline {
     stage('Initialize') {
       steps {
         sh 'echo \'Hello World from pipeline branch!\''
+        sh 'echo This message comes from a Git Push'
       }
     }
   }
